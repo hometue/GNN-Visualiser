@@ -1,8 +1,8 @@
-type GraphNode = {
+export type GraphNode = {
     nodeFeature: number
 }
 
-class Graph {
+export class Graph {
     adjMatrix: number[][] = []; // Simple version, 0 means not connected, non zero is connected
     nodeFeatures: number[] = [];
 
@@ -35,11 +35,32 @@ class Graph {
         console.log(this.adjMatrix);
     }
 
-    setNodeFeature(id: number){
+    cloneGraph(): Graph{
+        const newGraph: Graph = new Graph();
+        newGraph.adjMatrix = this.adjMatrix;
+        newGraph.nodeFeatures = this.nodeFeatures;
+        return newGraph;
+    }
 
+    setNodeFeature(id: number, nodeFeature: number){
+        if(id < this.nodeFeatures.length){
+            this.nodeFeatures[id] = nodeFeature;
+        }
     }
 
     setNodesConnection(firstNodeId: number, secondNodeId: number){
         
+    }
+
+    adjMatrixToString():string{
+        let outStr: string = "[";
+        this.adjMatrix.forEach((row, index) => {
+            if(index != 0){
+                outStr = outStr.concat(',');
+            }
+            outStr = outStr.concat('[', row.toString(), ']');
+        })
+        outStr = outStr.concat(']');
+        return outStr;
     }
 }
