@@ -4,8 +4,6 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import {Graph} from "./graph";
 
-const testGraph: Graph = new Graph(); 
-
 export default function AdjGraphView() {
     const [graph, setGraph] = useState(() => {
         const graph = new Graph();
@@ -18,7 +16,11 @@ export default function AdjGraphView() {
         <Card style={{display: 'inline-block'}} variant="outlined">
             <CardContent>
                 <Box>
-                    <IconButton>
+                    <IconButton onClick={() => {
+                        const newGraph = graph.cloneGraph();
+                        newGraph.removeNode(newGraph.adjMatrix.length - 1);
+                        setGraph(newGraph);
+                    }}>
                         <RemoveIcon />
                     </IconButton>
                     <IconButton onClick={() => {
