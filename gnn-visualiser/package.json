@@ -13,13 +13,12 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.11",
     "@mui/material": "^5.15.11",
-    "cytoscape": "^3.28.1",
-    "next": "14.1.0",
+    "next": "^14.1.1",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "reactflow": "^11.10.4"
   },
   "devDependencies": {
-    "@types/cytoscape": "^3.19.16",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
