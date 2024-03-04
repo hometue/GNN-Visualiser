@@ -1,13 +1,6 @@
 import { useState } from "react";
 import {Graph} from "./graph";
-import ReactFlow, {
-    addEdge,
-    MiniMap,
-    Controls,
-    Background,
-    useNodesState,
-    useEdgesState,
-  } from 'reactflow';
+import cytoscape from 'cytoscape';
 
 function graphToCyto(graph: Graph){
     let id = 0;
