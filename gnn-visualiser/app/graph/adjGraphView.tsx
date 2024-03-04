@@ -1,8 +1,8 @@
-import {useState} from "react";
+import { useState } from "react";
 import { Box, Card, CardContent, IconButton } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import {Graph} from "./graph";
+import { Graph } from "./graph";
 
 export default function AdjGraphView() {
     const [graph, setGraph] = useState(() => {
