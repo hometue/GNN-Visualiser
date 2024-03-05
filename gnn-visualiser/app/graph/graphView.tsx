@@ -4,7 +4,7 @@ import cytoscape from 'cytoscape';
 
 function graphToCyto(graph: Graph){
 	let id = 0;
-	const graphData: {data: {}}[] = [];
+	const graphData: {data: {id: string}}[] = [];
 	graph.adjMatrix.forEach((node, index) => {
 		const nodeData = {data: {id: index.toString()}};
 		graphData.push(nodeData);
