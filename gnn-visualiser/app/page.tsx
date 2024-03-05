@@ -1,10 +1,10 @@
 'use client'
 
 import Image from "next/image";
-import AdjGraphView from "./graph/adjGraphView";
+import GraphView from "./graph/graphView";
 
 export default function Test() {
   return (
-    <AdjGraphView />
+    <GraphView />
   )
 }
