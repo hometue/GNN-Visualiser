@@ -34,15 +34,24 @@ function NodeValueView(props: {cellValue: number, updateGraph: (value: number) =
     }
 }
 
-function NodeRowView(props: {row: number[], updateGraph: (target: number, value: number) => void}){
-    const [style, setStyle] = useState<CSSProperties>({backgroundColor: "white"});
+function NodeRowView(props: {row: number[], updateGraph: (target: number, value: number) => void, selected: boolean}){
+    const [hover, setHover] = useState(false);
+    const hoverStyle = {backgroundColor: "WhiteSmoke"};
+    const normalStyle = {backgroundColor: "white"};
+    let style: CSSProperties = {};
+    if(hover || props.selected){
+        style = hoverStyle;
+    }
+    else{
+        style = normalStyle
+    }
 
     const changeStyleOnMouseOver = (e: MouseEvent<HTMLDivElement>) => { 
-        setStyle({backgroundColor: "WhiteSmoke"});
+        setHover(true);
     };
 
     const changeStyleOnMouseleave = (e: MouseEvent<HTMLDivElement>) => { 
-        setStyle({backgroundColor: "white"});
+        setHover(false);
     };
 
     const updateValue = (target: number) => {
@@ -87,7 +96,7 @@ export default function AdjGraphView(props: {graph: ReadWrite<Graph>}) {
                 </Box>
                 <Box width="fit-content">
                     {props.graph.data.adjMatrix.map((row, index) => {
-                        return <NodeRowView key={index} row={row} updateGraph={writeGraph(index)} />
+                        return <NodeRowView key={index} row={row} updateGraph={writeGraph(index)} selected={index===props.graph.data.selectedNode} />
                     })}
                 </Box>
             </CardContent>

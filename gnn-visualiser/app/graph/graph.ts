@@ -5,6 +5,7 @@ export type GraphNode = {
 export class Graph {
     adjMatrix: number[][] = []; // Simple version, 0 means not connected, non zero is connected
     nodeFeatures: number[] = [];
+    selectedNode: null | number = null;
 
     addNode(){
         this.adjMatrix.forEach((row) => {
@@ -39,6 +40,7 @@ export class Graph {
         const newGraph: Graph = new Graph();
         newGraph.adjMatrix = this.adjMatrix;
         newGraph.nodeFeatures = this.nodeFeatures;
+        newGraph.selectedNode = this.selectedNode;
         return newGraph;
     }
 
