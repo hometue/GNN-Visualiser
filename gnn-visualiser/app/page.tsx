@@ -14,7 +14,7 @@ export default function Test() {
       return graph;
   });
   return (
-    <div style={{display: "flex"}}>
+    <div style={{display: "flex", height: "70vh", overflow: "auto"}}>
       <div style={{flex: 1}}><AdjGraphView graph={{data: graph, setData: setGraph}}/></div>
       <div style={{flex: 1}}><GraphView graph={graph} /></div>
     </div>

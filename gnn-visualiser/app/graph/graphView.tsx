@@ -39,10 +39,21 @@ export default function GraphView(props: {graph: Graph}) {
 				}
 			]
 		});
+		cy.fit();
+
+		const handleResize = () => { cy.resize(); cy.fit();
+		}
+
+		window.addEventListener('resize', handleResize);
+
+		return () => {
+			window.removeEventListener('resize', handleResize);
+		}
+
 	}, [props.graph])
 	
 
 	return (
-		<div style={{width: '100%', height: '80vh'}} ref={graphRef}></div>
+		<div style={{width: '100%', height: '100%'}} ref={graphRef}></div>
 	)
 }
