@@ -66,7 +66,6 @@ export default function GraphView(props: {graph: ReadWrite<Graph>}) {
 				const newGraph = props.graph.data.cloneGraph();
 				newGraph.selectedNode = parseInt(e.target.data("id"));
 				props.graph.setData(newGraph);
-				console.log(e.target.data("id"))
 			}
 	
 			cy.on("select", handleSelect);
