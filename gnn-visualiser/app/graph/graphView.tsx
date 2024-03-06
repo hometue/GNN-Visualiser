@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import {Graph} from "./graph";
 import cytoscape from 'cytoscape';
 
@@ -6,7 +6,7 @@ function graphToCyto(graph: Graph){
 	let id = 0;
 	const graphData: {data: {id: string}}[] = [];
 	graph.adjMatrix.forEach((node, index) => {
-		const nodeData = {data: {id: index.toString()}};
+		const nodeData = {data: {id: index.toString(), haha: 'LOL'}};
 		graphData.push(nodeData);
 		node.forEach((edge, edgeNode) => {
 			if(edge != 0){
@@ -22,30 +22,24 @@ function graphToCyto(graph: Graph){
 }
 
 
-export default function GraphView() {
+export default function GraphView(props: {graph: Graph}) {
 	const graphRef = useRef(null)
-	const [graph, setGraph] = useState(() => {
-		const graph = new Graph();
-		graph.addNode();
-		graph.addNode();
-		graph.addNode();
-		return graph;
-	});
 	useEffect(()=> {
 		let cy = cytoscape({
 			container: graphRef.current,
-			elements: graphToCyto(graph),
+			elements: graphToCyto(props.graph),
 			layout: {name: 'circle'},
 			style: [
 				{
 				selector: 'node',
 				style: {
-					'label': 'data(id)'
+					'label': (ele: any) => {return 'ID: ' + ele.data("id") + '\n' + ele.data("haha")},
+					"text-wrap": "wrap"
 				}
 				}
 			]
 		});
-	}, [])
+	}, [props.graph])
 	
 
 	return (
