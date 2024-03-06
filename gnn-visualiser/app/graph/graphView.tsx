@@ -77,7 +77,7 @@ export default function GraphView(props: {graph: ReadWrite<Graph>}) {
 	
 			window.addEventListener('resize', handleResize);
 
-			cacheAdjMatrix.current = props.graph.data.adjMatrix;
+			cacheAdjMatrix.current = props.graph.data.adjMatrix.map(o => [...o]);
 			cyto.current = cy;
 	
 			return () => {
