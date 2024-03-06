@@ -34,8 +34,15 @@ export default function GraphView(props: {graph: Graph}) {
 				selector: 'node',
 				style: {
 					'label': (ele: any) => {return 'ID: ' + ele.data("id") + '\n' + ele.data("haha")},
-					"text-wrap": "wrap"
+					"text-wrap": "wrap",
 				}
+				},
+				{
+					selector: 'edge',
+					style: {
+						"curve-style": "bezier",
+						"target-arrow-shape": "triangle"
+					}
 				}
 			]
 		});
