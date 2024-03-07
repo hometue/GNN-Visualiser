@@ -37,6 +37,7 @@ export default function GraphView(props: {graph: ReadWrite<Graph>}) {
 	useEffect(()=> {
 		const prevArr = cacheAdjMatrix.current;
 		if(prevArr === null || !arrayCheck(prevArr, props.graph.data.adjMatrix)){
+			// Redraw the whole graph
 			const cy = cytoscape({
 				container: graphRef.current,
 				elements: graphToCyto(props.graph.data),
@@ -58,6 +59,10 @@ export default function GraphView(props: {graph: ReadWrite<Graph>}) {
 					}
 				]
 			});
+			if(props.graph.data.selectedNode !== null){
+				cy.$('#'.concat(props.graph.data.selectedNode.toString())).select();
+			}
+
 			cy.fit();
 	
 			const handleResize = () => { cy.resize(); cy.fit();};
@@ -70,9 +75,13 @@ export default function GraphView(props: {graph: ReadWrite<Graph>}) {
 	
 			cy.on("select", handleSelect);
 	
-			const handleUnselect = (cy: cytoscape.Core, target: {data: {id: string}} | cytoscape.Core) => {
-				
+			const handleUnselect = () => {
+				const newGraph = props.graph.data.cloneGraph();
+				newGraph.selectedNode = null;
+				props.graph.setData(newGraph);
 			}
+
+			cy.on("unselect", handleUnselect);
 	
 			window.addEventListener('resize', handleResize);
 

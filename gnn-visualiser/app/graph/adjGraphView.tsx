@@ -3,22 +3,44 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { Graph } from "./graph";
 import { ReadWrite } from "../types/readWrite";
-import { CSSProperties, MouseEvent, FocusEvent, useState } from "react";
+import { CSSProperties, MouseEvent, FocusEvent, useState, useEffect, useRef } from "react";
+
+function useOutsideAlerter(ref: any, onOutsideAlert: () => void) {
+    useEffect(() => {
+      /**
+       * Alert if clicked on outside of element
+       */
+      function handleClickOutside(event: any) {
+        if (ref.current && !ref.current.contains(event.target)) {
+            onOutsideAlert();
+        }
+      }
+      // Bind the event listener
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        // Unbind the event listener on clean up
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [ref]);
+  }
 
 function NodeValueView(props: {cellValue: number, updateGraph: (value: number) => void}){
     const [editingVal, setEditingVal] = useState<null|number>(null);
+    const wrapperRef = useRef(null);
+    
 
     const onClick = (e: MouseEvent<HTMLDivElement>) => {
         setEditingVal(props.cellValue);
     }
 
-    const onEndEdit = (e: FocusEvent<HTMLInputElement>) => {
+    const onEndEdit = () => {
         const toUpdateVal = editingVal;
         if(toUpdateVal !== null){
             props.updateGraph(toUpdateVal);
         }
         setEditingVal(null);
     }
+    useOutsideAlerter(wrapperRef, onEndEdit);
 
     if(editingVal === null){
         return(
@@ -29,7 +51,7 @@ function NodeValueView(props: {cellValue: number, updateGraph: (value: number) =
     }
     else{
         return(
-            <input type="number" value={editingVal} onChange={(e) => {setEditingVal(parseInt(e.target.value))}} onBlur={onEndEdit} />
+            <input type="number" value={editingVal} onChange={(e) => {setEditingVal(parseInt(e.target.value))}} ref={wrapperRef} />
         )
     }
 }
