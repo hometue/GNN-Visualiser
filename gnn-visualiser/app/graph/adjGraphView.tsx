@@ -98,25 +98,32 @@ export default function AdjGraphView(props: {graph: ReadWrite<Graph>}) {
     return (
         <Card style={{display: 'inline-block'}} variant="outlined">
             <CardContent>
+                <div>Adj matrix</div>
                 <Box>
                     <IconButton onClick={() => {
                         const newGraph = props.graph.data.cloneGraph();
                         newGraph.removeNode(newGraph.adjMatrix.length - 1);
                         props.graph.setData(newGraph);
                     }}>
-                        <RemoveIcon />
+                        <RemoveIcon fontSize="small" />
                     </IconButton>
                     <IconButton onClick={() => {
                         const newGraph = props.graph.data.cloneGraph();
                         newGraph.addNode();
                         props.graph.setData(newGraph);
                     }}>
-                        <AddIcon />
+                        <AddIcon fontSize="small" />
                     </IconButton>
                 </Box>
                 <Box width="fit-content">
                     {props.graph.data.adjMatrix.map((row, index) => {
                         return <NodeRowView key={index} row={row} updateGraph={writeGraph(index)} selected={index===props.graph.data.selectedNode} />
+                    })}
+                </Box>
+                <Box>
+                    <div>Node embedding:</div>
+                    {props.graph.data.nodeFeatures.map((value)=>{
+                        return <>{value} </>
                     })}
                 </Box>
             </CardContent>
