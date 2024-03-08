@@ -3,46 +3,37 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { Graph } from "./graph";
 import { ReadWrite } from "../types/readWrite";
-import { CSSProperties, MouseEvent, FocusEvent, useState, useEffect, useRef } from "react";
+import { CSSProperties, MouseEvent, useState, useEffect, useRef, ChangeEventHandler } from "react";
 
-function useOutsideAlerter(ref: any, onOutsideAlert: () => void) {
+function InputBox(props: {value: number, onChange?: ChangeEventHandler<HTMLInputElement>, onEndEdit: () => void}){
+    const wrapperRef = useRef<any>(null);
     useEffect(() => {
-      /**
-       * Alert if clicked on outside of element
-       */
-      function handleClickOutside(event: any) {
-        if (ref.current && !ref.current.contains(event.target)) {
-            onOutsideAlert();
+        // Alert if clicked on outside of element
+        function handleClickOutside(event: any) {
+            if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+                props.onEndEdit();
+            }
         }
-      }
-      // Bind the event listener
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => {
-        // Unbind the event listener on clean up
-        document.removeEventListener("mousedown", handleClickOutside);
-      };
-    }, [ref]);
-  }
+          // Bind the event listener
+          document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+              // Unbind the event listener on clean up
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [props]);
+
+    return(
+        <input type="number" value={props.value} onChange={props.onChange} ref={wrapperRef} />
+    )
+}
 
 function NodeValueView(props: {cellValue: number, updateGraph: (value: number) => void}){
     const [editingVal, setEditingVal] = useState<null|number>(null);
-    const wrapperRef = useRef(null);
-    
-
-    const onClick = (e: MouseEvent<HTMLDivElement>) => {
-        setEditingVal(props.cellValue);
-    }
-
-    const onEndEdit = () => {
-        const toUpdateVal = editingVal;
-        if(toUpdateVal !== null){
-            props.updateGraph(toUpdateVal);
-        }
-        setEditingVal(null);
-    }
-    useOutsideAlerter(wrapperRef, onEndEdit);
 
     if(editingVal === null){
+        const onClick = (e: MouseEvent<HTMLDivElement>) => {
+            setEditingVal(props.cellValue);
+        }
         return(
             <span onClick={onClick}>
                 {props.cellValue.toString()}&nbsp;
@@ -50,8 +41,15 @@ function NodeValueView(props: {cellValue: number, updateGraph: (value: number) =
         )
     }
     else{
+        const onEndEdit = () => {
+            const toUpdateVal = editingVal;
+            if(toUpdateVal !== null){
+                props.updateGraph(toUpdateVal);
+            }
+            setEditingVal(null);
+        }
         return(
-            <input type="number" value={editingVal} onChange={(e) => {setEditingVal(parseInt(e.target.value))}} ref={wrapperRef} />
+            <InputBox value={editingVal} onChange={(e) => {setEditingVal(parseInt(e.target.value))}} onEndEdit={onEndEdit} />
         )
     }
 }
