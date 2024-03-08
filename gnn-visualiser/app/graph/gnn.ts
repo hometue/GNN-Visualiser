@@ -1,3 +1,9 @@
+import { Graph } from "./graph";
+
+export class GNNResult {
+    
+}
+
 export class GNNNode {
     weight: number = 1;
     constant: number = 0;
@@ -9,4 +15,8 @@ export class GNNNode {
 
 export class GNN {
     nodes: GNNNode[] = [];
+
+    getEmbeddings(graph: Graph){
+        //
+    }
 }
