@@ -36,6 +36,21 @@ export class Graph {
         console.log(this.adjMatrix);
     }
 
+    getNeighbours(id: number): number[]{
+        if(id >= this.adjMatrix.length){
+            return [];
+        }
+        const neighbours: number[] = [];
+        // Note: We do not skip the node itself, because 
+        this.adjMatrix[id].forEach((row: number, index: number)=>{
+            if(row !== 0){
+                // There is connection, hence neighbours
+                neighbours.push(index)
+            }
+        })
+        return neighbours;
+    }
+
     cloneGraph(): Graph{
         const newGraph: Graph = new Graph();
         newGraph.adjMatrix = this.adjMatrix;
