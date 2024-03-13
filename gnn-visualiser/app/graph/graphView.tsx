@@ -30,9 +30,9 @@ function arrayCheck(arr1: number[][], arr2: number[][]){
 }
 
 export default function GraphView(props: {graph: ReadWrite<Graph>}) {
-	const graphRef = useRef(null)
+	const graphRef = useRef<HTMLDivElement>(null);
 	const cacheAdjMatrix = useRef<null | number[][]>(null);
-	const cyto = useRef<cytoscape.Core>(cytoscape())
+	const cyto = useRef<cytoscape.Core>(cytoscape());
 
 	useEffect(()=> {
 		const prevArr = cacheAdjMatrix.current;
@@ -62,7 +62,6 @@ export default function GraphView(props: {graph: ReadWrite<Graph>}) {
 			if(props.graph.data.selectedNode !== null){
 				cy.$('#'.concat(props.graph.data.selectedNode.toString())).select();
 			}
-
 			cy.fit();
 	
 			const handleResize = () => { cy.resize(); cy.fit();};
