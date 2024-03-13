@@ -18,6 +18,20 @@ export class GNNNode {
 export class GNN {
     nodes: GNNNode[] = [];
 
+    static templateGraph(): GNN {
+        const gnn = new GNN();
+        gnn.nodes.push(new GNNNode());
+        const node2 = new GNNNode();
+        node2.weight = 2;
+        node2.constant = 3;
+        gnn.nodes.push(node2);
+        const node3 = new GNNNode();
+        node2.weight = 5;
+        node2.constant = 7;
+        gnn.nodes.push(node3);
+        return gnn;
+    }
+
     message(nodeFeature: number, graphNode: GNNNode): number {
         // TODO: Consider if passing the node itself is a better idea so we can potentially get info from other parts.
 
