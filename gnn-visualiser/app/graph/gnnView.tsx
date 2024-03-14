@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { GNN } from "./gnn";
 import cytoscape from "cytoscape";
+import { ReadWrite } from "../types/readWrite";
 
 function gnnToCyto(gnn: GNN){
 	const gnnData: {data: {id: string}}[] = [];
@@ -11,23 +12,27 @@ function gnnToCyto(gnn: GNN){
 			const edgeData = {data: {id: index.toString().concat('e'.concat(index.toString())),
 									source: (index - 1).toString(),
 									target: index.toString()
-			}};
+			}, selectable: false
+			};
 			gnnData.push(edgeData);
 		}
 	})
 	return gnnData;
 }
 
-export default function GNNView(props: {gnn: GNN}){
+export default function GNNView(props: {gnn: GNN, selectedNode?: ReadWrite<number | null>}){
 	const graphRef = useRef<HTMLDivElement>(null);
-	const cacheAdjMatrix = useRef<null | number[][]>(null);
-	const cyto = useRef<cytoscape.Core>(cytoscape());
+	//const cyto = useRef<cytoscape.Core>(cytoscape());
 
 	useEffect(()=> {
 		const cy = cytoscape({
 			container: graphRef.current,
 			elements: gnnToCyto(props.gnn),
-			layout: {name: 'grid'},
+			layout: {name: 'grid', rows: 1},
+			userPanningEnabled: false,
+			userZoomingEnabled: false,
+			boxSelectionEnabled: false,
+			autoungrabify: true,
 			style: [
 				{
 					selector: 'node',
@@ -46,7 +51,27 @@ export default function GNNView(props: {gnn: GNN}){
 				}
 			]
 		});
-	}, [props])
+
+		cy.fit();
+		if(props.selectedNode !== undefined && props.selectedNode.data !== null){
+			cy.$('#'.concat(props.selectedNode.data.toString())).select();
+		}
+		if(props.selectedNode !== undefined){
+			const handleSelect: cytoscape.EventHandler = (e) => {
+				props.selectedNode?.setData(parseInt(e.target.data("id")));
+			}
+	
+			cy.on("select", handleSelect);
+	
+			const handleUnselect = () => {
+				props.selectedNode?.setData(null);
+			}
+	
+			cy.on("unselect", handleUnselect);
+	
+		}
+
+	}, [props.gnn, props.selectedNode])
 	return (
 		<div style={{width: '100%', height: '100%'}} ref={graphRef}></div>
 	)

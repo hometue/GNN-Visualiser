@@ -2,12 +2,12 @@ import { Graph } from "./graph";
 
 export interface LayerOutput {
     message: number[] // Messages sent by each node
-    embedding: number[]
+    embedding: number[] //Embedding after the layer
 }
 
-export interface GNNResult {
-    finalEmbeddings: number[]
-    layerResult: LayerOutput[]
+export class GNNResult {
+    finalEmbeddings: number[] = []
+    layerResult: LayerOutput[] = []
 }
 
 export class GNNNode {
@@ -69,7 +69,15 @@ export class GNN {
         return output;
     }
 
-    getEmbeddings(graph: Graph){
-        
+    getEmbeddings(graph: Graph): GNNResult{
+        const result: GNNResult = new GNNResult();
+        let curEmbedding = graph.nodeFeatures;
+        this.nodes.forEach((node) => {
+            const layerOutput = this.calculateLayerOutput(graph, curEmbedding, node)
+            result.layerResult.push(layerOutput);
+            curEmbedding = layerOutput.embedding;
+        });
+        result.finalEmbeddings = curEmbedding;
+        return result;
     }
 }

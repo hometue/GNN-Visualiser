@@ -6,7 +6,7 @@ import { ReadWrite } from "../types/readWrite";
 function graphToCyto(graph: Graph){
 	const graphData: {data: {id: string}}[] = [];
 	graph.adjMatrix.forEach((node, index) => {
-		const nodeData = {data: {id: index.toString(), haha: 'LOL'}};
+		const nodeData = {data: {id: index.toString(), embedding: graph.nodeFeatures[index]}};
 		graphData.push(nodeData);
 		node.forEach((edge, edgeNode) => {
 			if(edge != 0){
@@ -46,7 +46,7 @@ export default function GraphView(props: {graph: ReadWrite<Graph>}) {
 					{
 						selector: 'node',
 						style: {
-							'label': (ele: any) => {return 'ID: ' + ele.data("id") + '\n' + ele.data("haha")},
+							'label': (ele: any) => {return 'ID: ' + ele.data("id") + '\nE:' + ele.data("embedding")},
 							"text-wrap": "wrap",
 						}
 					},

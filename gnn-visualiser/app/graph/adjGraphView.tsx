@@ -48,8 +48,17 @@ function NodeValueView(props: {cellValue: number, updateGraph: (value: number) =
             }
             setEditingVal(null);
         }
+        const stringToInt = (str: string) => {
+            const result = parseInt(str);
+            if(isNaN(result)){
+                return 0;
+            }
+            else{
+                return result
+            }
+        }
         return(
-            <InputBox value={editingVal} onChange={(e) => {setEditingVal(parseInt(e.target.value))}} onEndEdit={onEndEdit} />
+            <InputBox value={editingVal} onChange={(e) => {setEditingVal(stringToInt(e.target.value))}} onEndEdit={onEndEdit} />
         )
     }
 }
