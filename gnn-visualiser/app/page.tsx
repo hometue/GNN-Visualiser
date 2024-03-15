@@ -24,9 +24,9 @@ export default function Test() {
     <div style={{display: "flex", height: "80vh", overflow: "auto"}}>
       <div style={{display: "flex", flex: 1, flexDirection: "column", height: "100%"}}>
         <div style={{flex: 1}}><AdjGraphView graph={{data: graph, setData: setGraph}}/>
-        <div>{result.finalEmbeddings.toString()}</div>
-        <div>{(selectedGNNNode!==null)?result.layerResult[selectedGNNNode].message.toString():null}</div>
-        <div>{(selectedGNNNode!==null)?result.layerResult[selectedGNNNode].embedding.toString():null}</div>
+        <div>Final embeddings: {result.finalEmbeddings.toString()}</div>
+        {(selectedGNNNode!==null)?<>Messages sent from nodes at layer {selectedGNNNode}<div>{result.layerResult[selectedGNNNode].message.toString()}</div></>:null}
+        {(selectedGNNNode!==null)?<>Embeddings of nodes after layer {selectedGNNNode}<div>{result.layerResult[selectedGNNNode].embedding.toString()}</div></>:null}
       </div>
         <div style={{flex: 1}}><GNNView gnn={gnn} selectedNode={{data: selectedGNNNode, setData: setSelectedGNNNode}}/></div>
       </div>

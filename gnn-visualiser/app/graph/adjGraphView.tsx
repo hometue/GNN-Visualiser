@@ -107,7 +107,7 @@ export default function AdjGraphView(props: {graph: ReadWrite<Graph>}) {
     return (
         <Card style={{display: 'inline-block'}} variant="outlined">
             <CardContent>
-                <div>Adj matrix</div>
+                <div>Adj matrix. Edit by clicking on value then pressing enter or clicking away.</div>
                 <Box>
                     <IconButton onClick={() => {
                         const newGraph = props.graph.data.cloneGraph();
