@@ -3,7 +3,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { Graph } from "./graph";
 import { ReadWrite } from "../types/readWrite";
-import { CSSProperties, MouseEvent, useState, useEffect, useRef, ChangeEventHandler } from "react";
+import { CSSProperties, MouseEvent, KeyboardEvent, useState, useEffect, useRef, ChangeEventHandler } from "react";
 
 function InputBox(props: {value: number, onChange?: ChangeEventHandler<HTMLInputElement>, onEndEdit: () => void}){
     const wrapperRef = useRef<any>(null);
@@ -14,16 +14,22 @@ function InputBox(props: {value: number, onChange?: ChangeEventHandler<HTMLInput
                 props.onEndEdit();
             }
         }
-          // Bind the event listener
-          document.addEventListener("mousedown", handleClickOutside);
+        wrapperRef.current.focus();
+        // Bind the event listener
+        document.addEventListener("mousedown", handleClickOutside);
         return () => {
-              // Unbind the event listener on clean up
+            // Unbind the event listener on clean up
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [props]);
 
+    const enterEndEdit = (e: KeyboardEvent<HTMLElement>) => {
+        if(e.key === "Enter"){
+            props.onEndEdit();
+        }
+    }
     return(
-        <input type="number" value={props.value} onChange={props.onChange} ref={wrapperRef} />
+        <input type="number" value={props.value} onChange={props.onChange} onKeyDown={enterEndEdit} ref={wrapperRef} />
     )
 }
 
@@ -57,6 +63,7 @@ function NodeValueView(props: {cellValue: number, updateGraph: (value: number) =
                 return result
             }
         }
+
         return(
             <InputBox value={editingVal} onChange={(e) => {setEditingVal(stringToInt(e.target.value))}} onEndEdit={onEndEdit} />
         )
