@@ -9,10 +9,13 @@ function gnnToCyto(gnn: GNN){
 		const nodeData = {data: {id: index.toString(), weight: node.weight, constant: node.constant}};
 		gnnData.push(nodeData);
 		if(index !== 0){
-			const edgeData = {data: {id: index.toString().concat('e'.concat(index.toString())),
-									source: (index - 1).toString(),
-									target: index.toString()
-			}, selectable: false
+			const edgeData = {
+				data: {
+					id: index.toString().concat('e'.concat(index.toString())),
+					source: (index - 1).toString(),
+					target: index.toString()
+				},
+				selectable: false
 			};
 			gnnData.push(edgeData);
 		}
