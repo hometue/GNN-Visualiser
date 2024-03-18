@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
-import {Graph} from "./graph";
 import cytoscape from 'cytoscape';
+import { useEffect, useRef } from "react";
 import { ReadWrite } from "../types/readWrite";
+import { Graph } from "./graph";
 
 function graphToCyto(graph: Graph){
 	const graphData: {data: {id: string}}[] = [];

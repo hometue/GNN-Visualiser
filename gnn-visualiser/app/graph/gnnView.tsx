@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
-import { GNN } from "./gnn";
 import cytoscape from "cytoscape";
+import { useEffect, useRef } from "react";
 import { ReadWrite } from "../types/readWrite";
+import { GNN } from "./gnn";
 
 function gnnToCyto(gnn: GNN){
 	const gnnData: {data: {id: string}}[] = [];
