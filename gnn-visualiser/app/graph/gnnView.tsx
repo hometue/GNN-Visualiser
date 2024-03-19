@@ -1,12 +1,13 @@
 import cytoscape from "cytoscape";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ReadWrite } from "../types/readWrite";
 import { GNN } from "./gnn";
+import { Dialog } from "@mui/material";
 
 function gnnToCyto(gnn: GNN){
 	const gnnData: {data: {id: string}}[] = [];
 	gnn.nodes.forEach((node, index) => {
-		const nodeData = {data: {id: index.toString(), weight: node.weight, constant: node.constant}};
+		const nodeData = {data: {id: index.toString(), weight: node.weight, constant: node.constant}, selectable: false};
 		gnnData.push(nodeData);
 		if(index !== 0){
 			const edgeData = {
@@ -25,6 +26,7 @@ function gnnToCyto(gnn: GNN){
 
 export default function GNNView(props: {gnn: GNN, selectedNode?: ReadWrite<number | null>}){
 	const graphRef = useRef<HTMLDivElement>(null);
+	const [dialogOpen, setDialogOpen] = useState(false)
 
 	useEffect(()=> {
 		const cy = cytoscape({
@@ -55,6 +57,7 @@ export default function GNNView(props: {gnn: GNN, selectedNode?: ReadWrite<numbe
 		});
 
 		cy.fit();
+		cy.on("dblclick ", ()=> {setDialogOpen(true)})
 		if(props.selectedNode !== undefined && props.selectedNode.data !== null){
 			cy.$('#'.concat(props.selectedNode.data.toString())).select();
 		}
@@ -75,6 +78,12 @@ export default function GNNView(props: {gnn: GNN, selectedNode?: ReadWrite<numbe
 
 	}, [props.gnn, props.selectedNode])
 	return (
-		<div style={{width: '100%', height: '100%'}} ref={graphRef}></div>
+		<>
+			<div style={{width: '100%', height: '100%'}} ref={graphRef}></div>
+			<Dialog open={dialogOpen} onClose={()=>setDialogOpen(false)}>
+				Test
+			</Dialog>
+		</>
+		
 	)
 }

@@ -39,6 +39,24 @@ function NodeRowView(props: {row: number[], updateGraph: (target: number, value:
 	)
 }
 
+function NodeFeatures(props: {nodeFeatures: ReadWrite<number[]>}){
+	const writeNodeFeature = (index: number) => {
+		return (newNodeFeature: number) => {
+			const newNodeFeatures = [...props.nodeFeatures.data];
+			newNodeFeatures[index] = newNodeFeature;
+			props.nodeFeatures.setData(newNodeFeatures)
+		}
+	}
+	return (
+		<Box>
+			<div>Node embedding:</div>
+			{props.nodeFeatures.data.map((value, index)=>{
+				return <ValueViewEdit value={value} key={index} updateGraph={writeNodeFeature(index)} />
+			})}
+		</Box>
+	)
+}
+
 export default function AdjGraphView(props: {graph: ReadWrite<Graph>}) {
 	const writeGraph = (src: number) => {
 		return (target: number, value: number) => {
@@ -47,6 +65,13 @@ export default function AdjGraphView(props: {graph: ReadWrite<Graph>}) {
 			props.graph.setData(newGraph);
 		}
 	}
+
+	const updateNodeFeatures = (newNodeFeatures: number[]) => {
+		const newGraph = props.graph.data.cloneGraph();
+		newGraph.nodeFeatures = newNodeFeatures;
+		props.graph.setData(newGraph);
+	}
+
 	return (
 		<Card style={{display: 'inline-block'}} variant="outlined">
 			<CardContent>
@@ -72,12 +97,7 @@ export default function AdjGraphView(props: {graph: ReadWrite<Graph>}) {
 						return <NodeRowView key={index} row={row} updateGraph={writeGraph(index)} selected={index===props.graph.data.selectedNode} />
 					})}
 				</Box>
-				<Box>
-					<div>Node embedding:</div>
-					{props.graph.data.nodeFeatures.map((value)=>{
-						return <>{value} </>
-					})}
-				</Box>
+				<NodeFeatures nodeFeatures={{data: props.graph.data.nodeFeatures, setData: updateNodeFeatures}} />
 			</CardContent>
 		</Card>
 	)

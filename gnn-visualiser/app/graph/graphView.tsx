@@ -3,8 +3,16 @@ import { useEffect, useRef } from "react";
 import { ReadWrite } from "../types/readWrite";
 import { Graph } from "./graph";
 
+interface GraphNode {
+	data: {id: string, embedding: number}
+}
+
+interface GraphEdge {
+	data: {id: string, source: string, target: string}
+}
+
 function graphToCyto(graph: Graph){
-	const graphData: {data: {id: string}}[] = [];
+	const graphData: Array<GraphNode| GraphEdge> = [];
 	graph.adjMatrix.forEach((node, index) => {
 		const nodeData = {data: {id: index.toString(), embedding: graph.nodeFeatures[index]}};
 		graphData.push(nodeData);
@@ -21,7 +29,7 @@ function graphToCyto(graph: Graph){
 	return graphData;
 }
 
-function arrayCheck(arr1: number[][], arr2: number[][]){
+function array2DCheck(arr1: number[][], arr2: number[][]){
 	return (arr1.length === arr2.length) && arr1.every((row, index) => {
 		return row.length === arr2[index].length && row.every((val, rowIndex) => {
 			return val === arr2[index][rowIndex];
@@ -29,14 +37,21 @@ function arrayCheck(arr1: number[][], arr2: number[][]){
 	})
 }
 
+function array1DCheck(arr1: number[], arr2: number[]){
+	return (arr1.length === arr2.length) && arr1.every((value, index) => {
+		return value === arr2[index];
+	});
+}
+
 export default function GraphView(props: {graph: ReadWrite<Graph>}) {
 	const graphRef = useRef<HTMLDivElement>(null);
 	const cacheAdjMatrix = useRef<null | number[][]>(null);
+	const cacheEmbedding = useRef<null | number[]> (null);
 	const cyto = useRef<cytoscape.Core>(cytoscape());
 
 	useEffect(()=> {
 		const prevArr = cacheAdjMatrix.current;
-		if(prevArr === null || !arrayCheck(prevArr, props.graph.data.adjMatrix)){
+		if(prevArr === null || !array2DCheck(prevArr, props.graph.data.adjMatrix)){
 			// Redraw the whole graph
 			const cy = cytoscape({
 				container: graphRef.current,
@@ -85,11 +100,21 @@ export default function GraphView(props: {graph: ReadWrite<Graph>}) {
 			window.addEventListener('resize', handleResize);
 
 			cacheAdjMatrix.current = props.graph.data.adjMatrix.map(o => [...o]);
+			cacheEmbedding.current = [...props.graph.data.nodeFeatures];
 			cyto.current = cy;
 	
 			return () => {
 				window.removeEventListener('resize', handleResize);
 			}
+		}
+		else if(cacheEmbedding.current === null || !array1DCheck(cacheEmbedding.current, props.graph.data.nodeFeatures)){
+			// Only nodeFeatures changed
+			cyto.current.nodes().forEach((element: any) => {
+				if(element.isNode()){
+					element.data("embedding", props.graph.data.nodeFeatures[parseInt(element.data("id"))])
+				}
+			})
+			cacheEmbedding.current = [...props.graph.data.nodeFeatures];
 		}
 	}, [props.graph])
 	
