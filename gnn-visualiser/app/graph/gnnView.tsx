@@ -25,7 +25,6 @@ function gnnToCyto(gnn: GNN){
 
 export default function GNNView(props: {gnn: GNN, selectedNode?: ReadWrite<number | null>}){
 	const graphRef = useRef<HTMLDivElement>(null);
-	//const cyto = useRef<cytoscape.Core>(cytoscape());
 
 	useEffect(()=> {
 		const cy = cytoscape({
