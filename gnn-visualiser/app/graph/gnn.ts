@@ -80,4 +80,10 @@ export class GNN {
 		result.finalEmbeddings = curEmbedding;
 		return result;
 	}
+
+	clone(): GNN {
+		const newGNN = new GNN();
+		newGNN.nodes = this.nodes;
+		return newGNN;
+	}
 }

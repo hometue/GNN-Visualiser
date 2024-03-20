@@ -28,7 +28,7 @@ return (
 		{(selectedGNNNode!==null)?<>Messages sent from nodes at layer {selectedGNNNode}<div>{result.layerResult[selectedGNNNode].message.toString()}</div></>:null}
 		{(selectedGNNNode!==null)?<>Embeddings of nodes after layer {selectedGNNNode}<div>{result.layerResult[selectedGNNNode].embedding.toString()}</div></>:null}
 	</div>
-		<div style={{flex: 1}}><GNNView gnn={gnn} selectedNode={{data: selectedGNNNode, setData: setSelectedGNNNode}}/></div>
+		<div style={{flex: 1}}><GNNView gnn={{data: gnn, setData: setgnn}} selectedNode={{data: selectedGNNNode, setData: setSelectedGNNNode}}/></div>
 	</div>
 	<div style={{flex: 1}}><GraphView graph={{data: graph, setData: setGraph}} /></div>
 	</div>

@@ -2,7 +2,7 @@ import cytoscape from "cytoscape";
 import { useEffect, useRef, useState } from "react";
 import { ReadWrite } from "../types/readWrite";
 import { GNN } from "./gnn";
-import { Dialog } from "@mui/material";
+import { Dialog, TextField } from "@mui/material";
 
 function gnnToCyto(gnn: GNN){
 	const gnnData: {data: {id: string}}[] = [];
@@ -16,7 +16,8 @@ function gnnToCyto(gnn: GNN){
 					source: (index - 1).toString(),
 					target: index.toString()
 				},
-				selectable: false
+				selectable: false,
+				style: {events: "no"}
 			};
 			gnnData.push(edgeData);
 		}
@@ -24,14 +25,16 @@ function gnnToCyto(gnn: GNN){
 	return gnnData;
 }
 
-export default function GNNView(props: {gnn: GNN, selectedNode?: ReadWrite<number | null>}){
+export default function GNNView(props: {gnn: ReadWrite<GNN>, selectedNode?: ReadWrite<number | null>}){
 	const graphRef = useRef<HTMLDivElement>(null);
-	const [dialogOpen, setDialogOpen] = useState(false)
+	const [dialogOpen, setDialogOpen] = useState<number|null>(null);
+	const [dialogWeight, setDialogWeight] = useState(0);
+	const [dialogConst, setDialogConst] = useState(0);
 
 	useEffect(()=> {
 		const cy = cytoscape({
 			container: graphRef.current,
-			elements: gnnToCyto(props.gnn),
+			elements: gnnToCyto(props.gnn.data),
 			layout: {name: 'grid', rows: 1},
 			userPanningEnabled: false,
 			userZoomingEnabled: false,
@@ -57,7 +60,11 @@ export default function GNNView(props: {gnn: GNN, selectedNode?: ReadWrite<numbe
 		});
 
 		cy.fit();
-		cy.on("dblclick ", ()=> {setDialogOpen(true)})
+		cy.nodes().on("dblclick ", (event)=> {
+			setDialogOpen(parseInt(event.target.data("id")));
+			setDialogConst(props.gnn.data.nodes[parseInt(event.target.data("id"))].constant);
+			setDialogWeight(props.gnn.data.nodes[parseInt(event.target.data("id"))].weight);
+		});
 		if(props.selectedNode !== undefined && props.selectedNode.data !== null){
 			cy.$('#'.concat(props.selectedNode.data.toString())).select();
 		}
@@ -76,12 +83,24 @@ export default function GNNView(props: {gnn: GNN, selectedNode?: ReadWrite<numbe
 	
 		}
 
-	}, [props.gnn, props.selectedNode])
+	}, [props.gnn.data, props.selectedNode])
 	return (
 		<>
 			<div style={{width: '100%', height: '100%'}} ref={graphRef}></div>
-			<Dialog open={dialogOpen} onClose={()=>setDialogOpen(false)}>
-				Test
+			<Dialog open={dialogOpen !== null} onClose={()=>{
+				if(dialogOpen !== null){
+					const newGNN = props.gnn.data.clone();
+					newGNN.nodes[dialogOpen].weight = dialogWeight;
+					setDialogOpen(null);
+					props.gnn.setData(newGNN);
+				}
+			}}>
+				
+				{(dialogOpen !== null)?
+					<>
+						<TextField type="number" label="Weight" value={dialogWeight} onChange={(e)=> {setDialogWeight(parseInt(e.target.value))}} />
+					</>
+				:null}
 			</Dialog>
 		</>
 		
