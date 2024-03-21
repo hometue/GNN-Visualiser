@@ -7,7 +7,7 @@ import { Dialog, TextField } from "@mui/material";
 function gnnToCyto(gnn: GNN){
 	const gnnData: {data: {id: string}}[] = [];
 	gnn.nodes.forEach((node, index) => {
-		const nodeData = {data: {id: index.toString(), weight: node.weight, constant: node.constant}, selectable: false};
+		const nodeData = {data: {id: index.toString(), weight: node.weight, constant: node.constant}};
 		gnnData.push(nodeData);
 		if(index !== 0){
 			const edgeData = {
