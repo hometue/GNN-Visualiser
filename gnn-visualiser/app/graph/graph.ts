@@ -49,12 +49,7 @@ export class Graph {
 		let curId = 0;
 		const neighbours: number[] = [];
 		// Note: We do not skip the node itself, because 
-		/*this.adjMatrix[id].forEach((row: number, index: number)=>{
-			if(row !== 0){
-				// There is connection, hence neighbours
-				neighbours.push(index)
-			}
-		})*/
+		// Due to directed graph, a node is connected if the node's row has node[thatNodeId][id] as non-zero
 
 		while(curId < this.numberOfNodes()){
 			if(this.adjMatrix[curId][id] !== 0){
@@ -78,10 +73,6 @@ export class Graph {
 		if(id < this.nodeFeatures.length){
 			this.nodeFeatures[id] = nodeFeature;
 		}
-	}
-
-	setNodesConnection(firstNodeId: number, secondNodeId: number){
-		
 	}
 
 	adjMatrixToString():string{

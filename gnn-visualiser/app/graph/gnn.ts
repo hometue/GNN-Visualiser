@@ -15,6 +15,12 @@ export class GNNNode {
 	constant: number = 0;
 }
 
+export class AnnotatedResults {
+	message: number = 0;
+	embedding: number = 0;
+	prevNodes: AnnotatedResults[] = [];
+}
+
 export class GNN {
 	nodes: GNNNode[] = [];
 
