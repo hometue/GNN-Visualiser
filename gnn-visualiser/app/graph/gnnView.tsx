@@ -2,7 +2,7 @@ import cytoscape from "cytoscape";
 import { useEffect, useRef, useState } from "react";
 import { ReadWrite } from "../types/readWrite";
 import { GNN } from "./gnn";
-import { Dialog, DialogContent, TextField } from "@mui/material";
+import { Button, Dialog, DialogContent, TextField } from "@mui/material";
 
 function gnnToCyto(gnn: GNN){
 	const gnnData: {data: {id: string}}[] = [];
@@ -30,6 +30,16 @@ export default function GNNView(props: {gnn: ReadWrite<GNN>, selectedNode?: Read
 	const [dialogOpen, setDialogOpen] = useState<number|null>(null);
 	const [dialogWeight, setDialogWeight] = useState(0);
 	const [dialogConst, setDialogConst] = useState(0);
+
+	const dialogClose = () => {
+		if(dialogOpen !== null){
+			const newGNN = props.gnn.data.clone();
+			newGNN.nodes[dialogOpen].weight = dialogWeight;
+			newGNN.nodes[dialogOpen].constant = dialogConst;
+			setDialogOpen(null);
+			props.gnn.setData(newGNN);
+		}
+	}
 
 	useEffect(()=> {
 		const cy = cytoscape({
@@ -72,13 +82,12 @@ export default function GNNView(props: {gnn: ReadWrite<GNN>, selectedNode?: Read
 			const handleSelect: cytoscape.EventHandler = (e) => {
 				props.selectedNode?.setData(parseInt(e.target.data("id")));
 			}
-	
-			cy.on("select", handleSelect);
-	
+
 			const handleUnselect = () => {
 				props.selectedNode?.setData(null);
 			}
 	
+			cy.on("select", handleSelect);
 			cy.on("unselect", handleUnselect);
 	
 		}
@@ -87,14 +96,7 @@ export default function GNNView(props: {gnn: ReadWrite<GNN>, selectedNode?: Read
 	return (
 		<>
 			<div style={{width: '100%', height: '100%'}} ref={graphRef}></div>
-			<Dialog open={dialogOpen !== null} onClose={()=>{
-				if(dialogOpen !== null){
-					const newGNN = props.gnn.data.clone();
-					newGNN.nodes[dialogOpen].weight = dialogWeight;
-					setDialogOpen(null);
-					props.gnn.setData(newGNN);
-				}
-			}}>
+			<Dialog open={dialogOpen !== null} onClose={()=>{dialogClose}}>
 				<DialogContent>
 					{(dialogOpen !== null)?
 						<>
@@ -105,7 +107,7 @@ export default function GNNView(props: {gnn: ReadWrite<GNN>, selectedNode?: Read
 							<div>
 								<TextField type="number" label="Constant" value={dialogConst} onChange={(e)=> {setDialogConst(parseInt(e.target.value))}} />
 							</div>
-
+							<Button variant="outlined" onClick={dialogClose}>Ok</Button>
 						</>
 					:null}
 				</DialogContent>
