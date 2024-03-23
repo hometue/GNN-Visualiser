@@ -2,7 +2,7 @@ import cytoscape from "cytoscape";
 import { useEffect, useRef, useState } from "react";
 import { ReadWrite } from "../types/readWrite";
 import { GNN } from "./gnn";
-import { Dialog, TextField } from "@mui/material";
+import { Dialog, DialogContent, TextField } from "@mui/material";
 
 function gnnToCyto(gnn: GNN){
 	const gnnData: {data: {id: string}}[] = [];
@@ -95,12 +95,20 @@ export default function GNNView(props: {gnn: ReadWrite<GNN>, selectedNode?: Read
 					props.gnn.setData(newGNN);
 				}
 			}}>
-				
-				{(dialogOpen !== null)?
-					<>
-						<TextField type="number" label="Weight" value={dialogWeight} onChange={(e)=> {setDialogWeight(parseInt(e.target.value))}} />
-					</>
-				:null}
+				<DialogContent>
+					{(dialogOpen !== null)?
+						<>
+							<div>
+								<TextField type="number" label="Weight" value={dialogWeight} onChange={(e)=> {setDialogWeight(parseInt(e.target.value))}} />
+							</div>
+							<br />
+							<div>
+								<TextField type="number" label="Constant" value={dialogConst} onChange={(e)=> {setDialogConst(parseInt(e.target.value))}} />
+							</div>
+
+						</>
+					:null}
+				</DialogContent>
 			</Dialog>
 		</>
 		
