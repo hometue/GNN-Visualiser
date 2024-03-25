@@ -43,7 +43,7 @@ function array1DCheck(arr1: number[], arr2: number[]){
 	});
 }
 
-export default function GraphView(props: {graph: ReadWrite<Graph>}) {
+export default function GraphView(props: {graph: ReadWrite<Graph>, onDblClick?: (arg0: number) => void}) {
 	const graphRef = useRef<HTMLDivElement>(null);
 	const cacheAdjMatrix = useRef<null | number[][]>(null);
 	const cacheEmbedding = useRef<null | number[]> (null);
@@ -96,6 +96,14 @@ export default function GraphView(props: {graph: ReadWrite<Graph>}) {
 			}
 
 			cy.on("unselect", handleUnselect);
+			if(props.onDblClick !== undefined){
+				cy.on("dblclick", (e) => {
+					if(e.target.isNode() && props.onDblClick !== undefined){
+						props.onDblClick(parseInt(e.target.id()));
+					}
+				})
+			}
+			
 	
 			window.addEventListener('resize', handleResize);
 
