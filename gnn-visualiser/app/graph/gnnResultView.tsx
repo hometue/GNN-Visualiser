@@ -6,14 +6,13 @@ import { Graph } from "./graph";
 
 function resultToCyto(result: GNNResult, graph: Graph, gnn: GNN, nodeId: number): [data: {data: {id: string}}[], root: string]{
 	const resultData: {data: {id: string}}[] = [];
-	let root = '';
+	const root = "layer" + (result.layerResult.length - 1).toString() + "node" + nodeId;
 	let layers: number[] = [nodeId];
 	result.layerResult.toReversed().forEach((layerResult, layerIndex) => {
 		layers.forEach((node)=> {
 			const nodeData = {data: {id: "layer" + (result.layerResult.length - layerIndex - 1).toString() + "node" + node}}
 			if(layerIndex === 0){
 				(nodeData as any)["selected"] = true;
-				root = "layer" + (result.layerResult.length - layerIndex - 1).toString() + "node" + node;
 			}
 			resultData.push(nodeData)
 		});
