@@ -10,11 +10,21 @@ function resultToCyto(result: GNNResult, graph: Graph, gnn: GNN, nodeId: number)
 	let layers: number[] = [nodeId];
 	result.layerResult.toReversed().forEach((layerResult, layerIndex) => {
 		layers.forEach((node)=> {
-			const nodeData = {data: {id: "layer" + (result.layerResult.length - layerIndex - 1).toString() + "node" + node}}
+			const nodeData = [
+				{data: {id: "layer" + (result.layerResult.length - layerIndex - 1).toString() + "node" + node}},
+				{data: {id: "layer" + (result.layerResult.length - layerIndex - 1).toString() + "node" + node + "layer"},
+				style: {"shape": "rectangle"}
+				},
+				{data: {
+					id: "layer" + (result.layerResult.length - layerIndex - 1).toString() + "node" + node + "layertonode",
+					source: "layer" + (result.layerResult.length - layerIndex - 1).toString() + "node" + node + "layer",
+					target: "layer" + (result.layerResult.length - layerIndex - 1).toString() + "node" + node
+				}}
+			]
 			if(layerIndex === 0){
-				(nodeData as any)["selected"] = true;
+				(nodeData as any)[0]["style"] = {'background-color': 'red'};
 			}
-			resultData.push(nodeData)
+			resultData.push(...nodeData)
 		});
 		if(layerIndex < (result.layerResult.length - 1)){
 			// Lower than last index, continue to iterate
@@ -25,16 +35,15 @@ function resultToCyto(result: GNNResult, graph: Graph, gnn: GNN, nodeId: number)
 					newLayers.add(neighbour);
 					const edgeData = {data: {
 						id: "layer" + (result.layerResult.length - layerIndex - 1).toString() + "edge" + node + "to" + neighbour,
-						source: "layer" + (result.layerResult.length - layerIndex - 1).toString() + "node" + node,
-						target: "layer" + (result.layerResult.length - layerIndex - 2).toString() + "node" + neighbour
+						source: "layer" + (result.layerResult.length - layerIndex - 2).toString() + "node" + neighbour,
+						target: "layer" + (result.layerResult.length - layerIndex - 1).toString() + "node" + node + "layer"
 					}};
 					resultData.push(edgeData)
-				})
-			})
+				});
+			});
 			layers = Array.from(newLayers);
 		}
 	})
-	console.log(resultData)
 	return [resultData, root];
 }
 
@@ -46,8 +55,6 @@ export default function GnnResultView(props: {result: GNNResult, graph: Graph, g
 			container: resultRef.current,
 			elements: eleData,
 			layout: {name: 'breadthfirst', roots: [rootId]},
-			userPanningEnabled: false,
-			userZoomingEnabled: false,
 			boxSelectionEnabled: false,
 			autoungrabify: true,
 			style: [
@@ -56,7 +63,6 @@ export default function GnnResultView(props: {result: GNNResult, graph: Graph, g
 					style: {
 						'label': (ele: any) => {return 'ID: ' + ele.data("id")},
 						"text-wrap": "wrap",
-						"shape": "rectangle"
 					}
 				},
 				{
