@@ -38,8 +38,8 @@ return (
 		</div>
 		{(viewResult!==null)?
 		<Dialog open={viewResult!==null} fullScreen={true}>
-			<Button onClick={() => {setViewResult(null)}}>Close</Button>
 			<GnnResultView gnn={gnn} graph={graph} result={result} nodeId={viewResult}/>
+			<Button onClick={() => {setViewResult(null)}} variant="outlined">Close</Button>
 		</Dialog>
 		:null}
 	</>

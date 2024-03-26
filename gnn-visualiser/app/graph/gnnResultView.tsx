@@ -1,18 +1,24 @@
 import cytoscape from "cytoscape";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { GNN, GNNResult } from "./gnn";
 import { Graph } from "./graph";
 
 
-function resultToCyto(result: GNNResult, graph: Graph, gnn: GNN, nodeId: number): [data: {data: {id: string}}[], root: string]{
+function resultToCyto(result: GNNResult, graph: Graph, gnn: GNN, nodeId: number): [{data: {id: string}}[], string]{
 	const resultData: {data: {id: string}}[] = [];
 	const root = "layer" + (result.layerResult.length - 1).toString() + "node" + nodeId;
 	let layers: number[] = [nodeId];
 	result.layerResult.toReversed().forEach((layerResult, layerIndex) => {
 		layers.forEach((node)=> {
 			const nodeData = [
-				{data: {id: "layer" + (result.layerResult.length - layerIndex - 1).toString() + "node" + node}},
-				{data: {id: "layer" + (result.layerResult.length - layerIndex - 1).toString() + "node" + node + "layer"},
+				{data: {
+					id: "layer" + (result.layerResult.length - layerIndex - 1).toString() + "node" + node,
+					label: "Node " + node
+				}},
+				{data: {
+					id: "layer" + (result.layerResult.length - layerIndex - 1).toString() + "node" + node + "layer",
+					label: "Layer " + (result.layerResult.length - layerIndex - 1).toString()
+				},
 				style: {"shape": "rectangle"}
 				},
 				{data: {
@@ -43,6 +49,26 @@ function resultToCyto(result: GNNResult, graph: Graph, gnn: GNN, nodeId: number)
 			});
 			layers = Array.from(newLayers);
 		}
+		else{
+			// Add last layer of nodes
+			const allNeighbours: Set<number> = new Set();
+			layers.forEach((node)=> {
+				const neighbours = graph.getNeighbours(node);
+				neighbours.forEach((neighbour)=>{
+					allNeighbours.add(neighbour);
+					const edgeData = {data: {
+						id: "layer" + (result.layerResult.length - layerIndex - 1).toString() + "edge" + node + "to" + neighbour,
+						source: "layer" + "initial" + "node" + neighbour,
+						target: "layer" + (result.layerResult.length - layerIndex - 1).toString() + "node" + node + "layer"
+					}};
+					resultData.push(edgeData)
+				});
+			});
+			allNeighbours.forEach((node)=>{
+				const nodeData = {data:{id:"layer" + "initial" + "node" + node, label: "Node " + node}}
+				resultData.push(nodeData)
+			})
+		}
 	})
 	return [resultData, root];
 }
@@ -61,7 +87,7 @@ export default function GnnResultView(props: {result: GNNResult, graph: Graph, g
 				{
 					selector: 'node',
 					style: {
-						'label': (ele: any) => {return 'ID: ' + ele.data("id")},
+						'label': "data(label)",
 						"text-wrap": "wrap",
 					}
 				},
