@@ -1,5 +1,9 @@
 import { Graph } from "./graph";
 
+export enum aggregateFunctions {
+	mean
+}
+
 export interface LayerOutput {
 	message: number[] // Messages sent by each node
 	embedding: number[] //Embedding after the layer
@@ -13,6 +17,7 @@ export class GNNResult {
 export class GNNNode {
 	weight: number = 1;
 	constant: number = 0;
+	aggFun: aggregateFunctions = aggregateFunctions.mean
 }
 
 export class GNN {
@@ -38,18 +43,22 @@ export class GNN {
 		return nodeFeature * graphNode.weight + graphNode.constant;
 	}
 
-	aggregate(id: number, graph: Graph, messages: number[]): number {
+	aggregate(id: number, graph: Graph, messages: number[], graphNode: GNNNode): number {
 		// Average
-
-		const neighbours = graph.getNeighbours(id);
-		let sum = 0;
-		let count = 0;
-		neighbours.forEach((neighbourId: number) => {
-			sum = sum + messages[neighbourId];
-			count = count + 1;
-		})
-
-		return sum/count;
+		if(graphNode.aggFun === aggregateFunctions.mean){
+			const neighbours = graph.getNeighbours(id);
+			let sum = 0;
+			let count = 0;
+			neighbours.forEach((neighbourId: number) => {
+				sum = sum + messages[neighbourId];
+				count = count + 1;
+			})
+			return sum/count;
+		}
+		else{
+			// To please the typescript overlords
+			return 0;
+		}
 	}
 
 	calculateLayerOutput(graph: Graph, prevNodeFeatures: number[], layerNode: GNNNode): LayerOutput {
@@ -60,7 +69,7 @@ export class GNN {
 		let curId = 0;
 		const newNodeFeatures: number[] = []
 		while(curId < graph.adjMatrix.length){
-			newNodeFeatures[curId] = this.aggregate(curId, graph, messages);
+			newNodeFeatures[curId] = this.aggregate(curId, graph, messages, layerNode);
 			curId = curId + 1;
 		}
 
@@ -69,7 +78,7 @@ export class GNN {
 		return output;
 	}
 
-	getEmbeddings(graph: Graph): GNNResult{
+	getEmbeddings(graph: Graph): GNNResult {
 		const result: GNNResult = new GNNResult();
 		let curEmbedding = graph.nodeFeatures;
 		this.nodes.forEach((node) => {
