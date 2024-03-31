@@ -25,7 +25,7 @@ const result:GNNResult = gnn.getEmbeddings(graph);
 
 return (
 	<>
-		<div style={{display: "flex", height: "80vh", overflow: "auto"}}>
+		<div style={{display: "flex", height: "80vh", overflow: "hidden"}}>
 		<div style={{display: "flex", flex: 1, flexDirection: "column", height: "100%"}}>
 			<div style={{flex: 1}}><AdjGraphView graph={{data: graph, setData: setGraph}}/>
 			<div>Final embeddings: {result.finalEmbeddings.toString()}</div>

@@ -1,6 +1,6 @@
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { Box, Card, CardContent, IconButton } from "@mui/material";
+import { Box, Button, Card, CardContent, IconButton } from "@mui/material";
 import { CSSProperties, MouseEvent, useState } from "react";
 import { ReadWrite } from "../types/readWrite";
 import { Graph } from "./graph";
@@ -33,9 +33,14 @@ function NodeRowView(props: {row: number[], updateGraph: (target: number, value:
 	}
 
 	return(
-		<div style={style} onMouseLeave={changeStyleOnMouseleave} onMouseOver={changeStyleOnMouseOver}>{props.row.map((value, index)=> {
-			return <ValueViewEdit value={value} key={index} updateGraph={updateValue(index)}/>
-		})}</div>
+		<span style={style} onMouseLeave={changeStyleOnMouseleave} onMouseOver={changeStyleOnMouseOver}>
+			{props.row.map((value, index)=> {
+				return (
+					<span key={index} style={{ borderStyle: "solid", borderWidth: "1px" }}>
+						<ValueViewEdit value={value} updateGraph={updateValue(index)}/>
+					</span>
+				)
+		})}</span>
 	)
 }
 
@@ -49,9 +54,13 @@ function NodeFeatures(props: {nodeFeatures: ReadWrite<number[]>}){
 	}
 	return (
 		<Box>
-			<div>Node embedding:</div>
+			<div>Node embedding. Double click to edit.</div>
 			{props.nodeFeatures.data.map((value, index)=>{
-				return <ValueViewEdit value={value} key={index} updateGraph={writeNodeFeature(index)} />
+				return (
+					<span key={index} style={{ borderStyle: "solid", borderWidth: "1px" }}>
+						<ValueViewEdit value={value} updateGraph={writeNodeFeature(index)} />
+					</span>
+				)
 			})}
 		</Box>
 	)
@@ -77,24 +86,32 @@ export default function AdjGraphView(props: {graph: ReadWrite<Graph>}) {
 			<CardContent>
 				<div>Adj matrix. Edit by clicking on value then pressing enter or clicking away.</div>
 				<Box>
-					<IconButton onClick={() => {
+					<Button onClick={() => {
 						const newGraph = props.graph.data.cloneGraph();
 						newGraph.removeNode(newGraph.adjMatrix.length - 1);
 						props.graph.setData(newGraph);
-					}}>
-						<RemoveIcon fontSize="small" />
-					</IconButton>
-					<IconButton onClick={() => {
+					}}
+					startIcon={<RemoveIcon fontSize="small" />}>
+						Remove node
+					</Button>
+					<Button onClick={() => {
 						const newGraph = props.graph.data.cloneGraph();
 						newGraph.addNode();
 						props.graph.setData(newGraph);
-					}}>
-						<AddIcon fontSize="small" />
-					</IconButton>
+					}}
+					startIcon={<AddIcon fontSize="small" />}>
+						Add node
+					</Button>
 				</Box>
 				<Box width="fit-content">
 					{props.graph.data.adjMatrix.map((row, index) => {
-						return <NodeRowView key={index} row={row} updateGraph={writeGraph(index)} selected={index===props.graph.data.selectedNode} />
+						return (
+						<div key={index}>
+							<span>Node {index}: </span>
+							<NodeRowView row={row} updateGraph={writeGraph(index)} selected={index===props.graph.data.selectedNode} />
+						</div>
+						)
+						
 					})}
 				</Box>
 				<NodeFeatures nodeFeatures={{data: props.graph.data.nodeFeatures, setData: updateNodeFeatures}} />
