@@ -61,7 +61,7 @@ export default function GraphView(props: {graph: ReadWrite<Graph>, onDblClick?: 
 					{
 						selector: 'node',
 						style: {
-							'label': (ele: any) => {return 'ID: ' + ele.data("id") + '\nE:' + ele.data("embedding")},
+							'label': (ele: any) => {return 'Node ' + ele.data("id") + '\nFeature: ' + ele.data("embedding")},
 							"text-wrap": "wrap",
 						}
 					},

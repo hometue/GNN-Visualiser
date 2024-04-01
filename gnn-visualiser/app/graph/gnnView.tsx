@@ -1,13 +1,13 @@
 import cytoscape from "cytoscape";
 import { useEffect, useRef, useState } from "react";
 import { ReadWrite } from "../types/readWrite";
-import { GNN } from "./gnn";
-import { Button, Dialog, DialogContent, TextField } from "@mui/material";
+import { AggregateFunctions, GNN } from "./gnn";
+import { Button, Dialog, DialogContent, MenuItem, Select, TextField } from "@mui/material";
 
 function gnnToCyto(gnn: GNN){
 	const gnnData: {data: {id: string}}[] = [];
 	gnn.nodes.forEach((node, index) => {
-		const nodeData = {data: {id: index.toString(), weight: node.weight, constant: node.constant}};
+		const nodeData = {data: {id: index.toString(), weight: node.weight, constant: node.constant, agg: AggregateFunctions[node.aggFun]}};
 		gnnData.push(nodeData);
 		if(index !== 0){
 			const edgeData = {
@@ -30,12 +30,14 @@ export default function GNNView(props: {gnn: ReadWrite<GNN>, selectedNode?: Read
 	const [dialogOpen, setDialogOpen] = useState<number|null>(null);
 	const [dialogWeight, setDialogWeight] = useState(0);
 	const [dialogConst, setDialogConst] = useState(0);
+	const [dialogAggFun, setDialogAggFun] = useState(AggregateFunctions.mean)
 
 	const dialogClose = () => {
 		if(dialogOpen !== null){
 			const newGNN = props.gnn.data.clone();
 			newGNN.nodes[dialogOpen].weight = dialogWeight;
 			newGNN.nodes[dialogOpen].constant = dialogConst;
+			newGNN.nodes[dialogOpen].aggFun = dialogAggFun;
 			setDialogOpen(null);
 			props.gnn.setData(newGNN);
 		}
@@ -54,7 +56,7 @@ export default function GNNView(props: {gnn: ReadWrite<GNN>, selectedNode?: Read
 				{
 					selector: 'node',
 					style: {
-						'label': (ele: any) => {return 'ID: ' + ele.data("id") + '\nWeight: ' + ele.data("weight") + '\nConstant: ' + ele.data("constant")},
+						'label': (ele: any) => {return 'Layer ' + ele.data("id") + '\nWeight: ' + ele.data("weight") + '\nBias: ' + ele.data("constant")+ '\nAggregate Function: ' + ele.data("agg")},
 						"text-wrap": "wrap",
 						"shape": "rectangle"
 					}
@@ -74,6 +76,7 @@ export default function GNNView(props: {gnn: ReadWrite<GNN>, selectedNode?: Read
 			setDialogOpen(parseInt(event.target.data("id")));
 			setDialogConst(props.gnn.data.nodes[parseInt(event.target.data("id"))].constant);
 			setDialogWeight(props.gnn.data.nodes[parseInt(event.target.data("id"))].weight);
+			setDialogAggFun(props.gnn.data.nodes[parseInt(event.target.data("id"))].aggFun)
 		});
 		if(props.selectedNode !== undefined && props.selectedNode.data !== null){
 			cy.$('#'.concat(props.selectedNode.data.toString())).select();
@@ -106,7 +109,15 @@ export default function GNNView(props: {gnn: ReadWrite<GNN>, selectedNode?: Read
 							</div>
 							<br />
 							<div>
-								<TextField type="number" label="Constant" value={dialogConst} onChange={(e)=> {setDialogConst(parseInt(e.target.value))}} />
+								<TextField type="number" label="Bias" value={dialogConst} onChange={(e)=> {setDialogConst(parseInt(e.target.value))}} />
+							</div>
+							<div>Aggregate function: 
+								<Select value={AggregateFunctions[dialogAggFun]} label="Aggregate function" onChange={(e)=> {setDialogAggFun(AggregateFunctions[e.target.value as keyof typeof AggregateFunctions])}}>
+									<MenuItem value={"mean"}>Mean</MenuItem>
+									<MenuItem value={"min"}>Min</MenuItem>
+									<MenuItem value={"max"}>Max</MenuItem>
+									<MenuItem value={"sum"}>Sum</MenuItem>
+								</Select>
 							</div>
 							<Button variant="outlined" onClick={dialogClose}>Ok</Button>
 						</>

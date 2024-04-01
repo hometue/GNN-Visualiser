@@ -1,7 +1,7 @@
 import { Graph } from "./graph";
 
-export enum aggregateFunctions {
-	mean
+export enum AggregateFunctions {
+	mean, min, max, sum
 }
 
 export interface LayerOutput {
@@ -17,7 +17,7 @@ export class GNNResult {
 export class GNNNode {
 	weight: number = 1;
 	constant: number = 0;
-	aggFun: aggregateFunctions = aggregateFunctions.mean
+	aggFun: AggregateFunctions = AggregateFunctions.mean
 }
 
 export class GNN {
@@ -44,16 +44,23 @@ export class GNN {
 	}
 
 	aggregate(id: number, graph: Graph, messages: number[], graphNode: GNNNode): number {
+		const neighbours = graph.getNeighbours(id);
+		const neighbourMessages = neighbours.map((nodeId)=> messages[nodeId]);
 		// Average
-		if(graphNode.aggFun === aggregateFunctions.mean){
-			const neighbours = graph.getNeighbours(id);
+		if(graphNode.aggFun === AggregateFunctions.mean){
 			let sum = 0;
 			let count = 0;
-			neighbours.forEach((neighbourId: number) => {
-				sum = sum + messages[neighbourId];
+			neighbourMessages.forEach((message: number) => {
+				sum = sum + message;
 				count = count + 1;
 			})
 			return sum/count;
+		}
+		else if(graphNode.aggFun === AggregateFunctions.min){
+			return Math.min(...neighbourMessages);
+		}
+		else if(graphNode.aggFun === AggregateFunctions.max){
+			return Math.max(...neighbourMessages);
 		}
 		else{
 			// To please the typescript overlords

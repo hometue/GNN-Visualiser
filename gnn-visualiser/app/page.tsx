@@ -25,7 +25,7 @@ const result:GNNResult = gnn.getEmbeddings(graph);
 
 return (
 	<>
-		<div style={{display: "flex", height: "80vh", overflow: "hidden"}}>
+		<div style={{display: "flex", height: "85vh", overflow: "hidden"}}>
 		<div style={{display: "flex", flex: 1, flexDirection: "column", height: "100%"}}>
 			<div style={{flex: 1}}><AdjGraphView graph={{data: graph, setData: setGraph}}/>
 			<div>Final embeddings: {result.finalEmbeddings.toString()}</div>
@@ -38,6 +38,7 @@ return (
 		</div>
 		{(viewResult!==null)?
 		<Dialog open={viewResult!==null} fullScreen={true}>
+			<div>Computation graph for node {viewResult}</div>
 			<GnnResultView gnn={gnn} graph={graph} result={result} nodeId={viewResult}/>
 			<Button onClick={() => {setViewResult(null)}} variant="outlined">Close</Button>
 		</Dialog>
