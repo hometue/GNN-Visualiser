@@ -10,7 +10,6 @@ export class Graph {
 	addNode(){
 		this.adjMatrix.forEach((row) => {
 			row.push(0);
-			
 		});
 		let newRow: number[] = new Array<number>(this.adjMatrix.length + 1);
 		newRow.fill(0, 0, this.adjMatrix.length + 1);
@@ -42,7 +41,7 @@ export class Graph {
 		console.log(this.adjMatrix);
 	}
 
-	getNeighbours(id: number): number[]{
+	getNeighbours(id: number): number[] {
 		if(id >= this.adjMatrix.length){
 			return [];
 		}
@@ -61,7 +60,7 @@ export class Graph {
 		return neighbours;
 	}
 
-	cloneGraph(): Graph{
+	cloneGraph(): Graph {
 		const newGraph: Graph = new Graph();
 		newGraph.adjMatrix = this.adjMatrix;
 		newGraph.nodeFeatures = this.nodeFeatures;
@@ -75,7 +74,7 @@ export class Graph {
 		}
 	}
 
-	adjMatrixToString():string{
+	adjMatrixToString(): string {
 		let outStr: string = "[";
 		this.adjMatrix.forEach((row, index) => {
 			if(index != 0){
