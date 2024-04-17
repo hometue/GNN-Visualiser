@@ -50,8 +50,7 @@ export default function GraphView(props: {graph: ReadWrite<Graph>, onDblClick?: 
 	const cyto = useRef<cytoscape.Core>(cytoscape());
 
 	useEffect(()=> {
-		const prevArr = cacheAdjMatrix.current;
-		if(prevArr === null || !array2DCheck(prevArr, props.graph.data.adjMatrix)){
+		if(cacheAdjMatrix.current === null || !array2DCheck(cacheAdjMatrix.current, props.graph.data.adjMatrix)){
 			// Redraw the whole graph
 			const cy = cytoscape({
 				container: graphRef.current,
