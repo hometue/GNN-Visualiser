@@ -32,7 +32,7 @@ export default function ValueViewEdit(props: {value: number, updateGraph: (value
 	const [editingVal, setEditingVal] = useState<null|number>(null);
 
 	if(editingVal === null){
-		const onClick = (e: MouseEvent<HTMLDivElement>) => {
+		const onClick = (e: MouseEvent<HTMLSpanElement>) => {
 			setEditingVal(props.value);
 		}
 		return(
