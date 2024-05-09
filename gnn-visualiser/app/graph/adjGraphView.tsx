@@ -39,14 +39,16 @@ function NodeRowView(props: {row: number[], updateGraph: (target: number, value:
 	}
 
 	return(
-		<span style={style} onMouseLeave={changeStyleOnMouseleave} onMouseOver={changeStyleOnMouseOver}>
+		<>
 			{props.row.map((value, index)=> {
 				return (
-					<span key={index} style={{ borderStyle: "solid", borderWidth: "1px" }}>
-						<ValueViewEdit value={value} updateGraph={updateValue(index)}/>
-					</span>
+					<td key={index} style={{ borderStyle: "solid", borderWidth: "1px" }}>
+						<span style={style} onMouseLeave={changeStyleOnMouseleave} onMouseOver={changeStyleOnMouseOver}>
+							<ValueViewEdit value={value} updateGraph={updateValue(index)}/>
+						</span>
+					</td>
 				)
-		})}</span>
+		})}</>
 	)
 }
 
@@ -113,15 +115,17 @@ export default function AdjGraphView(props: {graph: ReadWrite<Graph>}) {
 						</Button>
 					</Box>
 					<Box width="fit-content">
+						<table><tbody>
 						{props.graph.data.adjMatrix.map((row, index) => {
 							return (
-							<div key={index}>
-								<span>Node {index}: </span>
+							<tr key={index}>
+								<td>Node {index}: </td>
 								<NodeRowView row={row} updateGraph={writeGraph(index)} selected={index===props.graph.data.selectedNode} />
-							</div>
+							</tr>
 							)
 							
 						})}
+						</tbody></table>
 					</Box>
 					<NodeFeatures nodeFeatures={{data: props.graph.data.nodeFeatures, setData: updateNodeFeatures}} />
 				</CardContent>
