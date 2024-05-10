@@ -42,7 +42,7 @@ function NodeRowView(props: {row: number[], updateGraph: (target: number, value:
 		<>
 			{props.row.map((value, index)=> {
 				return (
-					<td key={index} style={{ borderStyle: "solid", borderWidth: "1px" }}>
+					<td key={index} style={{ borderStyle: "solid", borderWidth: "1px", padding: 0 }}>
 						<span style={style} onMouseLeave={changeStyleOnMouseleave} onMouseOver={changeStyleOnMouseOver}>
 							<ValueViewEdit value={value} updateGraph={updateValue(index)}/>
 						</span>
@@ -62,7 +62,7 @@ function NodeFeatures(props: {nodeFeatures: ReadWrite<number[]>}){
 	}
 	return (
 		<Box>
-			<div>Node embedding. Double click to edit.</div>
+			<div>Node embedding. Click to edit.</div>
 			{props.nodeFeatures.data.map((value, index)=>{
 				return (
 					<span key={index} style={{ borderStyle: "solid", borderWidth: "1px" }}>
@@ -115,11 +115,11 @@ export default function AdjGraphView(props: {graph: ReadWrite<Graph>}) {
 						</Button>
 					</Box>
 					<Box width="fit-content">
-						<table><tbody>
+						<table style={{borderSpacing: "0px"}}><tbody>
 						{props.graph.data.adjMatrix.map((row, index) => {
 							return (
 							<tr key={index}>
-								<td>Node {index}: </td>
+								<td style={{ borderStyle: "solid", borderWidth: "1px", padding: 0 }}>Node {index}: </td>
 								<NodeRowView row={row} updateGraph={writeGraph(index)} selected={index===props.graph.data.selectedNode} />
 							</tr>
 							)
